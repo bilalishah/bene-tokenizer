@@ -1,8 +1,15 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { BarChart, LineChart, PieChart } from "recharts";
-import { Users, UserPlus, QrCode, Clock, ArrowUpRight } from "lucide-react";
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  ChartLegend,
+  ChartLegendContent,
+} from "@/components/ui/chart";
+import { Users, UserPlus, QrCode, Clock, ArrowUpRight, Building2 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, PieChart, Pie, Cell } from "recharts";
 
 // Sample data - replace with actual API data later
 const dailyVisits = [
@@ -11,13 +18,15 @@ const dailyVisits = [
   { name: "Wed", visits: 45 },
   { name: "Thu", visits: 30 },
   { name: "Fri", visits: 50 },
+  { name: "Sat", visits: 25 },
+  { name: "Sun", visits: 15 },
 ];
 
 const departmentData = [
-  { name: "Health", value: 400 },
-  { name: "Education", value: 300 },
-  { name: "Social Services", value: 200 },
-  { name: "Housing", value: 100 },
+  { name: "Health", value: 400, color: "#34D399" },
+  { name: "Education", value: 300, color: "#60A5FA" },
+  { name: "Social Services", value: 200, color: "#F472B6" },
+  { name: "Housing", value: 100, color: "#FBBF24" },
 ];
 
 const recentRegistrations = [
@@ -27,6 +36,8 @@ const recentRegistrations = [
 ];
 
 const Index = () => {
+  console.log("Rendering Index component");
+  
   return (
     <div className="space-y-8 animate-fadeIn">
       {/* Header Section */}
@@ -90,7 +101,7 @@ const Index = () => {
               <p className="text-2xl font-bold mt-2">12</p>
             </div>
             <div className="bg-purple-500/10 p-3 rounded-full">
-              <BarChart className="w-5 h-5 text-purple-500" />
+              <Building2 className="w-5 h-5 text-purple-500" />
             </div>
           </div>
         </Card>
@@ -111,24 +122,37 @@ const Index = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="p-6">
           <h3 className="text-lg font-semibold mb-4">Daily Visitor Trends</h3>
-          <div className="h-[300px]">
-            <LineChart
-              width={500}
-              height={300}
-              data={dailyVisits}
-              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-            >
-              {/* Add chart components here */}
-            </LineChart>
-          </div>
+          <ChartContainer className="h-[300px]" config={{}}>
+            <BarChart data={dailyVisits}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip content={<ChartTooltipContent />} />
+              <Bar dataKey="visits" fill="#34D399" />
+            </BarChart>
+          </ChartContainer>
         </Card>
         <Card className="p-6">
           <h3 className="text-lg font-semibold mb-4">Department Distribution</h3>
-          <div className="h-[300px]">
-            <PieChart width={400} height={300}>
-              {/* Add chart components here */}
+          <ChartContainer className="h-[300px]" config={{}}>
+            <PieChart>
+              <Pie
+                data={departmentData}
+                dataKey="value"
+                nameKey="name"
+                cx="50%"
+                cy="50%"
+                outerRadius={100}
+                label
+              >
+                {departmentData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Pie>
+              <Tooltip content={<ChartTooltipContent />} />
+              <ChartLegend content={<ChartLegendContent />} />
             </PieChart>
-          </div>
+          </ChartContainer>
         </Card>
       </div>
 
